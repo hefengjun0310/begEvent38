@@ -24,19 +24,19 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">用户名称：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputEmail3" value="李思思">
+                        <input type="text" name="username" class="form-control username"  value="李思思">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">昵称：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputEmail3" value="思思">
+                        <input type="text" name="nickname" class="form-control nickname"  value="思思">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">邮箱：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputEmail3" value="lisisi@126.com">
+                        <input type="text" name="email" class="form-control email"  value="lisisi@126.com">
                     </div>
                 </div>
                 
@@ -44,14 +44,14 @@
                     <label for="inputPassword3" class="col-sm-2 control-label">用户图标：</label>
                     <div class="col-sm-10">
                         <img src="images/2.jpg" alt="" class="user_pic">
-                        <input type="file" id="exampleInputFile">
+                        <input type="file" id="exampleInputFile" name="userPic">
                     </div>
                 </div>
 
                 <div class="form-group">
                         <label for="inputEmail3" class="col-sm-2 control-label">密码：</label>
                         <div class="col-sm-4">
-                            <input type="password" class="form-control" id="inputEmail3" value="12345678">
+                            <input type="password" name="paddword" class="form-control password" value="12345678">
                         </div>
                     </div>
                
@@ -66,5 +66,46 @@
     </div>
 
 </body>
+    <script>
+    //入口函数
+    $(function(){
+        //需求:个人中心图片预览
+        //1给input:file这个选择图片文件的标签一个change事件
+        $('#exampleInputFile').on('change',function(){
+            //2通过files[0]来获取当前选中的这个图片文件
+            var fileIcon = this.files[0];
+            //3. 把这URL.createObjectURL来创建一个URL
+            var url = URL.createObjectURL(fileIcon);
+            //4.把这url赋值给显示图片的src属性
+            $('.user_pic').attr('src',url);
+        });
+        //需求一进到这个页面,就获取当前登录的这个用户的详细信息,展示在当前的这个页面
+        $.ajax({
+            url:'http://localhost:8080/admin/user/detail',
+            success:function(backData){
+                console.log(backData);
+                //把获取到的数据,展示在对应的标签上
+                $('input.username').val(backData.data.username);
+                $('input.nickname').val(backData.data.nickname);
+                $('input.email').val(backData.data.email);
+                $('input.password').val(backData.data.password);
+                //把上面代码简化
+                for (var key in backData.data) {
+                    $('input.'+key).val(backData.data[key]);
+                }
+                $('img.user_pic').attr('src',backData.data.userPic);
+            }
+        });
+        //需求:修改个人中心信息
+        //1.给修改按钮注册点击事件
+        $('.btn-edit').on('click',function(e){
+            e.preventDefault();
+            //通过formData获取要修改的信息
+            var fd = new FormData($('form')[0]);
+            
+        })
+
+    });
+    </script>
 
 </html>
