@@ -85,10 +85,10 @@
             success:function(backData){
                 console.log(backData);
                 //把获取到的数据,展示在对应的标签上
-                $('input.username').val(backData.data.username);
-                $('input.nickname').val(backData.data.nickname);
-                $('input.email').val(backData.data.email);
-                $('input.password').val(backData.data.password);
+                // $('input.username').val(backData.data.username);
+                // $('input.nickname').val(backData.data.nickname);
+                // $('input.email').val(backData.data.email);
+                // $('input.password').val(backData.data.password);
                 //把上面代码简化
                 for (var key in backData.data) {
                     $('input.'+key).val(backData.data[key]);
