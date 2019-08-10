@@ -15,6 +15,7 @@
     <script src="js/jedate/js/jedate.js"></script>
     <script src="js/tinymce/js/tinymce/tinymce.min.js"></script>
     <script src="js/tinymce/js/tinymce_setup.js"></script>
+    <script src="./js/moment.js"></script>
 </head>
 
 <body>
@@ -39,12 +40,10 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章类别：</label>
                     <div class="col-sm-4">
-                        <select class="form-control">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
+                        <select class="form-control" id="article_catelist">
+                            <option value="1">爱生活</option>
+                            <option value="2">爱旅行</option>
+
                         </select>
                     </div>
                 </div>
@@ -79,7 +78,51 @@
             </form>
         </div>
     </div>
+    <script src="./js/template-web.js"></script>
+    <script id="article_cate" type="text/html">
+        {{each data v}}
+        <option value="{{v.id}}">{{v.name}}</option>
+        {{/each}}
+    </script>
+    <script>
+        //入口函数
+        $(function () {
+            //需求一进到页面,显示文章分类
+            $.ajax({
+                url: 'http://localhost:8080/admin/category/list',
+                type: 'get',
+                success: function (backData) {
+                    var resHtml = template('article_cate', backData);
+                    $('#article_catelist').html(resHtml);
+                }
+            });
 
+            //需求:页面一进来,就显示当前系统时间.
+            var timeStr =moment().format('YYYY-MM-DD');
+            $('#dateinput').val(timeStr);
+            
+
+            //需求:点击按钮发布文章
+            //1.给发布按钮设置点击事件
+            $('.btn-release').on('click',function(){
+                var fd = new FormData($('form')[0]);
+                fd.append('content',tinyMCE.activeEditor.getContent());
+                fd.append('state','已发布');
+                $.ajax({
+                url:'http://localhost:8080/admin/article/publish',
+                type:'post',
+                dataType:'json',
+                data:fd,
+                success: function(backData){
+                    if(backData.code == 200){
+                            //5.完成后提示一下
+                            alert('发布成功!');
+                }
+                });
+            })
+
+        });
+    </script>
 </body>
 
 </html>
